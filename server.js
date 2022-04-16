@@ -1,32 +1,44 @@
-// const express = require("express");
-// const fs = require("fs");
-// const ejs = require("ejs");
+const express = require("express");
+const fs = require("fs");
+const ejs = require("ejs");
 
-// const app = express();
+const app = express();
 
-// const prisma = require("@prisma/client");
-// client = new prisma.PrismaClient();
+const prisma = require("@prisma/client");
+client = new prisma.PrismaClient();
 
-// const bodyParser = require("body-parser");
-// const { request } = require("http");
+const bodyParser = require("body-parser");
+const { request } = require("http");
 
-// app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: false}));
 
-// app.get("/", async (request, response) => {
-// 	const todos = await client.todo.findMany();
-// 	const template = fs.readFileSync("template.ejs").toString();
-// 	const html = ejs.render(template, {todos: todos});
-// 	response.send(html);
-// });
 
-// app.post("/", async (request, response) => {
-// 	await client.todo.create({data: {name: request.body.newTodo}});
+const cookieParser = require("cookie-parser");
+const express = require("express");
+const app = express();
 
-// 	const todos = await client.todo.findMany();
-// 	const template = fs.readFileSync("template.ejs").toString();
-// 	const html = ejs.render(template, {todos: todos});
-// 	response.send(html);
-// });
+app.use(cookieParser());
+
+
+app.get("/", async (request, response) => {
+	const count = parseInt(request.cookies.count) || 0;
+	const newCount = count + 1;
+	response.cookie("count", newCount.toString());
+
+	const todos = await client.todo.findMany();
+	const template = fs.readFileSync("template.ejs").toString();
+	const html = ejs.render(template, {todos: todos, newCount: newCount});
+	response.send(html);
+});
+
+app.post("/", async (request, response) => {
+	await client.todo.create({data: {name: request.body.newTodo}});
+
+	const todos = await client.todo.findMany();
+	const template = fs.readFileSync("template.ejs").toString();
+	const html = ejs.render(template, {todos: todos});
+	response.send(html);
+});
 
 // app.get("/form", (request, response) => {
 // 	const html = fs.readFileSync("./form.html").toString();
@@ -45,17 +57,18 @@
 
 
 
-const cookieParser = require("cookie-parser");
-const express = require("express");
-const app = express();
+// const cookieParser = require("cookie-parser");
+// const express = require("express");
+// const app = express();
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
-app.get("/", (request, response) =>{
-	const count = parseInt(request.cookies.count) || 0;
-	const newCount = count + 1;
-	response.cookie("count", newCount.toString());
-	response.send(`${newCount}回目のアクセスです`);
-});
+// app.get("/", (request, response) =>{
+// 	const count = parseInt(request.cookies.count) || 0;
+// 	const newCount = count + 1;
+// 	response.cookie("count", newCount.toString());
+// 	response.send(`${newCount}回目のアクセスです`);
+// });
+
 
 app.listen(3000);
