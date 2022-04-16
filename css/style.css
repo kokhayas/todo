@@ -1,0 +1,14 @@
+div.todos {
+	background-color: blueviolet;
+	border: solid 3px blue;
+}
+
+div.todo {
+	border: solid;
+	border-radius: 5%;
+	border-color:aqua;
+}
+
+div {
+	background-color: aquamarine;
+}
